@@ -11,6 +11,10 @@ console.log("Loaded MONGODB_URI:", process.env.MONGODB_URI);
 
 connectDB()
 .then(()=>{
+    app.on("error",()=>{
+        console.log("ERROR connected successfully but cannot be able to talk to DB",error);
+            throw error
+    })
     app.listen(process.env.PORT||8000,
         ()=>{
             console.log(`server is running at port: ${process.env.PORT}`)
