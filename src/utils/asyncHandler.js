@@ -1,10 +1,14 @@
+// asyncHandler is a higher-order function that wraps async route handlers
 
-const asyncHandler = (requestHandler)=>(req,res,next)=>{
-    Promise.resolve(requestHandler(req,res,next)).
-    catch((err)=>next(err))
-}
+const asyncHandler = (requestHandler) => {
+    return (req, res, next) => {
+        Promise.resolve(requestHandler(req, res, next)).catch((error) =>
+            next(error)
+        );
+    };
+};
 
-export {asyncHandler}
+export { asyncHandler };
 
 // const asyncHandler = () => {}
 // const asyncHandler = () => {() => {}}

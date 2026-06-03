@@ -25,16 +25,33 @@ const userSchema = new mongoose.Schema({
         trim:true,
         // lowercase:true
     },
-    avtar:{
-        type:String,//cloudinary
-        required:true,
-        // unique:true,
-        // trim:true,
-        // lowercase:true
+    // avatar:{
+    //     type:String,//cloudinary
+    //     required:true,
+    //     // unique:true,
+    //     // trim:true,
+    //     // lowercase:true
+    // },
+    avatar:{
+        url:{
+            type: String
+        },
+        publicId:{
+            type: String
+        }
     },
+    // coverImage:{
+    //     type:String,
+    //     // required:true,
+    // },
     coverImage:{
-        type:String,
-        required:true,
+        url:{
+            type:String    
+        },
+        publicId:{
+            type: String
+        }
+
     },
     watchHistory:[
         {
@@ -59,7 +76,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password,10)
+    this.password = await bcrypt.hash(this.password,10)
     next()
 })
 
@@ -68,7 +85,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
 }
 
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign({
+    return jwt.sign({
         _id: this._id,
         email: this.email,
         username: this.username,
@@ -80,14 +97,16 @@ userSchema.methods.generateAccessToken = function(){
 )
 }
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign({
+    return jwt.sign({
         _id: this._id
         
     },
-    process.env.REFRESH_TOKEN_SECRET,{
+    process.env.REFRESH_TOKEN_SECRET,
+    {
         expiresIn:process.env.REFRESH_TOKEN_EXPIRY
     }
 )
 }
-userSchema.methods.generateRefreshToken = function(){}
-export const user = mongoose.model("user",userSchema)   
+// userSchema.methods.generateRefreshToken = function(){}
+export const User = mongoose.model("user",userSchema) 
+// export {isPasswordCorrect, generateAccessToken, generateRefreshToken}  
