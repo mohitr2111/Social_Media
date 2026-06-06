@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
         url:{
             type:String    
         },
-        publicId:{
+        public_id:{
             type: String
         }
 

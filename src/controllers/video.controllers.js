@@ -1,6 +1,6 @@
 import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
-import {User} from "../models/user.model.js"
+import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
     uploadOnCloudinary,
@@ -46,14 +46,14 @@ const uploadVideo = asyncHandler(async (req, res) => {
         );
     }
 
-    const newVideo = await Video.create({
+    const createdVideo = await Video.create({
         videoFile: {
             url: VideoCloudinaryResult?.url,
-            publicId: VideoCloudinaryResult?.public_id,
+            public_id: VideoCloudinaryResult?.public_id,
         },
         thumbnail: {
             url: ThumbnailCloudinaryResult?.url,
-            publicId: ThumbnailCloudinaryResult?.public_id,
+            public_id: ThumbnailCloudinaryResult?.public_id,
         },
         description,
         title,
@@ -61,7 +61,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
         owner: req.user._id,
     });
 
-    const createdVideo = await Video.findById(newVideo.id);
+    // const createdVideo = await Video.findById(newVideo.id);
 
     if (!createdVideo) {
         throw new ApiError(500, "Server Error video is not created in DB");
@@ -97,39 +97,39 @@ const watchVideo = asyncHandler(async (req, res) => {
     }
 
     video.views += 1;
-    
+
     const token =
         req.cookies?.accessToken ||
         req.header("Authorization")?.replace("Bearer ", "") ||
         null;
-        
-        if (token) {
-          try {
+
+    if (token) {
+        try {
             const decodedToken = jwt.verify(
-              token,
-              process.env.ACCESS_TOKEN_SECRET
+                token,
+                process.env.ACCESS_TOKEN_SECRET
             );
-            
+
             const _user = await User.findById(decodedToken?._id);
             if (!_user) {
-              throw new ApiError(401, "Invalid access");
+                throw new ApiError(401, "Invalid access");
             }
-            
+
             // Prevent duplicate entries in watch history
             if (!_user.watchHistory.includes(video._id)) {
-              _user.watchHistory.push(video._id);
-              await _user.save();
-            }else{
-              video.views -=1;
+                _user.watchHistory.push(video._id);
+                await _user.save();
+            } else {
+                video.views -= 1;
             }
-          } catch (error) {
+        } catch (error) {
             throw new ApiError(
-              500,
-              error?.message || "Something went wrong while auth_middleware"
+                500,
+                error?.message || "Something went wrong while auth_middleware"
             );
-          }
         }
-        
+    }
+
     await video.save();
 
     res.status(200).json(
@@ -220,6 +220,11 @@ const updateThumbnail = asyncHandler(async (req, res) => {
     if (!localPathOfThumbnail) {
         throw new ApiError(404, "Could not get the new thumbnail. retry!!");
     }
+    
+    const deleteOldThumbnailFromCloudinary = await deleteImageFromCloudinary(video.thumbnail.public_id);
+    if(!deleteImageFromCloudinary){
+        throw new ApiError(500, "Old thumbnail is not deleted from cloudinary")
+    }
 
     const cloudinaryResults = await uploadOnCloudinary(localPathOfThumbnail);
 
@@ -230,14 +235,15 @@ const updateThumbnail = asyncHandler(async (req, res) => {
         );
     }
 
+
     const updatedVideo = await Video.findByIdAndUpdate(
         video._id,
         {
             $set: {
-                thumbnail:{
-                  url:cloudinaryResults?.url,
-                  publicId:cloudinaryResults?.public_id
-                }
+                thumbnail: {
+                    url: cloudinaryResults?.url,
+                    public_id: cloudinaryResults?.public_id,
+                },
             },
         },
         {
@@ -287,6 +293,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
     // validity & authorization
     // delete video and thumbnail from cloudinary
     // delete this object
+    // remove this video from watch history of users
     // res
 
     const videoId = req.params?.videoId;
@@ -298,17 +305,14 @@ const deleteVideo = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Video not found");
     }
     if (video.owner.toString() != user._id.toString()) {
-        throw new ApiError(
-            403,
-            "You are not Authorized to delete this video"
-        );
+        throw new ApiError(403, "You are not Authorized to delete this video");
     }
 
     const deleteResultVideo = await deleteVideoFromCloudinary(
-        video.videoFile.publicId
+        video.videoFile.public_id
     );
     const deleteResultImage = await deleteImageFromCloudinary(
-        video.thumbnail.publicId
+        video.thumbnail.public_id
     );
 
     if (!deleteResultVideo || !deleteResultImage) {
@@ -319,10 +323,16 @@ const deleteVideo = asyncHandler(async (req, res) => {
         video._id
     );
 
-    // const Check_video_is_deleted_or_not = await Video.findById(video._id);
     if (!Check_video_is_deleted_or_not) {
         throw new ApiError(500, "Video Cant be deleted, try again");
     }
+
+    User.updateMany(
+        { watchHistory: video._id },
+        {
+            $pull: { watchHistory: video._id },
+        }
+    );
 
     res.status(200).json(
         new ApiResponse(

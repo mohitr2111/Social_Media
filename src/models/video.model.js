@@ -6,11 +6,13 @@ const videoSchema = new mongoose.Schema(
         videoFile:{
             url:{
                 type: String,
-                required:true
+                required:true,
+                unique: true
             },
-            publicId:{
+            public_id:{
                 type: String,
-                required:true
+                required:true,
+                unique: true
             }
         },
         thumbnail:{
@@ -18,7 +20,7 @@ const videoSchema = new mongoose.Schema(
                 type: String,
                 required:true
             },
-            publicId:{
+            public_id:{
                 type: String,
                 required:true
             }

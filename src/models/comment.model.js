@@ -1,4 +1,4 @@
-import mongoose, { schemma } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
     content:{
@@ -8,9 +8,12 @@ const commentSchema = new mongoose.Schema({
     video:{
         type: Schema.Types.ObjectId,
         ref: "Video",
-        required:true
     },
-    Owner:{
+    post:{
+        type: Schema.Types.ObjectId,
+        ref:"Post"
+    },
+    owner:{
         type: Schema.Types.ObjectId,
         ref: "User",
         required:true
@@ -34,4 +37,20 @@ const commentSchema = new mongoose.Schema({
     }
 })
 
+commentSchema.pre("validate", async function(next){
+    if(!this.isModified("video") && !this.isModified("post")) return next();
+    const hasPost = !!this.post;
+    const hasVideo = !!this.video;
+    if(hasPost === hasVideo){
+        return next(
+            new Error(
+                "Comment must belong to either a video or a post"
+            )
+        )
+    }
+
+    next();
+})
+
 export const Comment = mongoose.model("Comment",commentSchema)
+

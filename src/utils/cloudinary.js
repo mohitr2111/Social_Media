@@ -33,7 +33,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 const deleteVideoFromCloudinary = async (elementUrl)=>{
   try {
     if(!elementUrl){
-      throw new ApiError(500, "didnot recieve the public Id, (DFC)" )
+      return null;
     }
   
     const finalResult  = await cloudinary.uploader.destroy(elementUrl,{
@@ -55,7 +55,7 @@ const deleteVideoFromCloudinary = async (elementUrl)=>{
 const deleteImageFromCloudinary = async (elementUrl)=>{
   try {
     if(!elementUrl){
-      throw new ApiError(500, "didnot recieve the public Id , (DFC)" )
+      return null;
     }
   
     const finalResult  = await cloudinary.uploader.destroy(elementUrl,{
@@ -75,8 +75,32 @@ const deleteImageFromCloudinary = async (elementUrl)=>{
   }
 }
 
+const deleteMultipleResources = async(arr)=>{
+  try {
+    if(!arr){
+      return null;
+    }
+  
+    const finalResult = await cloudinary.api.delete_resources(
+      arr,
+      {
+        resource_type:"image",
+        invalidate:true
+      }
+    )
+
+    console.log("Deleted successfully:", finalResult.deleted);
+  
+    return finalResult.deleted;
+  } catch (error) {
+    console.log("some error occur during deleting object from cloudinary in utils")
+    return null;
+  }
+}
+
 export { 
   uploadOnCloudinary,
   deleteVideoFromCloudinary, 
-  deleteImageFromCloudinary 
+  deleteImageFromCloudinary,
+  deleteMultipleResources
 };

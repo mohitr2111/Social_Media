@@ -115,11 +115,11 @@ const registerUser = asyncHandler(async (req, res) => {
         password,
         avatar: {
             url: avatarCloudinaryResult.url,
-            publicId: avatarCloudinaryResult.public_id,
+            public_id: avatarCloudinaryResult.public_id,
         },
         coverImage: {
             url: coverCloudinaryResult?.url || "",
-            publicId: coverCloudinaryResult?.public_id || "",
+            public_id: coverCloudinaryResult?.public_id || "",
         },
     });
 
@@ -438,7 +438,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
     }
 
     const deleteAvatarCloudinaryResult = await deleteImageFromCloudinary(
-        user.avatar.publicId
+        user.avatar.public_id
     );
 
     if (!deleteAvatarCloudinaryResult) {
@@ -453,7 +453,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
             $set: {
                 avatar: {
                     url: uploadedAvatarResult?.url,
-                    publicId: uploadedAvatarResult?.public_id,
+                    public_id: uploadedAvatarResult?.public_id,
                 },
             },
         },
@@ -480,7 +480,7 @@ const updateCoverImg = asyncHandler(async (req, res) => {
     }
 
     const deleteCICloudinaryResult = await deleteImageFromCloudinary(
-        user.coverImage.publicId
+        user.coverImage.public_id
     );
 
     if (!deleteCICloudinaryResult) {
@@ -496,7 +496,7 @@ const updateCoverImg = asyncHandler(async (req, res) => {
             $set: {
                 coverImage: {
                     url: uploadedCoverImgResult?.url,
-                    publicid: uploadedCoverImgResult?.public_id,
+                    public_id: uploadedCoverImgResult?.public_id,
                 },
             },
         },
@@ -691,14 +691,14 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 
     const deleteAvatarCloudinaryResult = await deleteImageFromCloudinary(
-        user.avatar.publicId
+        user.avatar.public_id
     );
     if (!deleteAvatarCloudinaryResult) {
         throw new ApiError(404, "avatar   is not deleted from cloudinary");
     }
-    if (user.coverImage.publicId) {
+    if (user.coverImage.public_id) {
         const deleteCICloudinaryResult = await deleteImageFromCloudinary(
-            user.coverImage.publicId
+            user.coverImage.public_id
         );
 
         if (!deleteCICloudinaryResult) {

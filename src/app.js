@@ -23,8 +23,12 @@ app.use(cookieParser())
 
 import route from './routes/user.routes.js'
 import routeVideo from './routes/video.routes.js'
+import routeComment from './routes/comment.routes.js'
+import routePost from './routes/post.route.js'
 app.use("/api/v1/users", route)
 app.use("/api/v1/video", routeVideo)
+app.use("/api/v1/comment", routeComment)
+app.use("/api/v1/post", routePost)
 
 
 export{app}
