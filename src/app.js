@@ -25,10 +25,16 @@ import route from './routes/user.routes.js'
 import routeVideo from './routes/video.routes.js'
 import routeComment from './routes/comment.routes.js'
 import routePost from './routes/post.route.js'
+import routePlaylist from './routes/post.route.js'
+import routeLike from './routes/like.routes.js'
+import routeSubscription from './routes/subscription.route.js'
 app.use("/api/v1/users", route)
-app.use("/api/v1/video", routeVideo)
-app.use("/api/v1/comment", routeComment)
-app.use("/api/v1/post", routePost)
+app.use("/api/v1/videos", routeVideo)
+app.use("/api/v1/comments", routeComment)
+app.use("/api/v1/posts", routePost)
+app.use("/api/v1/playlists", routePlaylist)
+app.use("/api/v1/likes", routeLike)
+app.use("/api/v1/subscriptions", routeSubscription)
 
 
 export{app}

@@ -5,6 +5,9 @@ import { ApiResponse } from "../utils/ApiRes.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary, deleteImageFromCloudinary, deleteMultipleResources } from "../utils/cloudinary.js";
 
+// todo
+// getPostComments
+
 
 const createPost = asyncHandler(async(req, res)=>{
     // take content

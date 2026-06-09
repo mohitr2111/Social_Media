@@ -11,6 +11,9 @@ import { Video } from "../models/video.model.js";
 import { ApiResponse } from "../utils/ApiRes.js";
 import { url } from "inspector";
 
+// todo
+// getvideoComment
+
 const uploadVideo = asyncHandler(async (req, res) => {
     // get the details
     // validate those details
@@ -18,11 +21,11 @@ const uploadVideo = asyncHandler(async (req, res) => {
     // cloudinary
     // save
 
-    const { title, description } = req.body;
+    const { title, description, isListed=true } = req.body;
 
     if (
         [title, description].some((fields) => {
-            fields?.trim() === "";
+            return fields?.trim() === "";
         })
     ) {
         throw new ApiError(400, "Title and Description are mandatory fields");
@@ -59,6 +62,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
         title,
         duration: VideoCloudinaryResult.duration,
         owner: req.user._id,
+        isListed
     });
 
     // const createdVideo = await Video.findById(newVideo.id);
@@ -111,6 +115,7 @@ const watchVideo = asyncHandler(async (req, res) => {
             );
 
             const _user = await User.findById(decodedToken?._id);
+            
             if (!_user) {
                 throw new ApiError(401, "Invalid access");
             }

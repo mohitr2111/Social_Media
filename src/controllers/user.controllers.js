@@ -10,6 +10,9 @@ import {
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
+// todo
+// getSubscribedChannels() getChannelSubscribers() checkSubscriptionStatus()
+//  get user playlist
 const generateAccessANDRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -722,6 +725,7 @@ const deleteUser = asyncHandler(async (req, res) => {
         )
     );
 });
+
 
 export {
     registerUser,

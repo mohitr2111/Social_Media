@@ -8,6 +8,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { app } from "../app.js";
 import mongoose from "mongoose";
 
+// todo
+// addCommentsOnPlaylist
+
 const addCommentOnVideo = asyncHandler(async(req, res)=>{
     // get video id
     // get user id

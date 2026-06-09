@@ -33,7 +33,9 @@ router.route("/register").post(
     ]),
     registerUser
 )
-
+/*
+/api/v1/users
+*/
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/reset-token").post(systemLoginByAccessToken)
