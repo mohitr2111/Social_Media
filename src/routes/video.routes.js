@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js"
+import { optionAuth } from "../middlewares/optionalAuth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js";
 import{
     uploadVideo,
@@ -27,7 +28,7 @@ router.route("/upload-video").post(
     uploadVideo
 )
 
-router.route("/watch/:videoId").get(watchVideo)
+router.route("/watch/:videoId").get(optionAuth, watchVideo)
 router.route("/update-details/:videoId").patch(verifyJWT, updateVideoDetails)
 router.route("/update-thumbnail/:videoId").patch(
     verifyJWT,

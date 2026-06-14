@@ -89,50 +89,40 @@ const watchVideo = asyncHandler(async (req, res) => {
     // if the user is logined then add the video to the watch history of the user
     // return the video url to the user
 
-    const nvideoId = req.params?.videoId;
+    const videoId = req.params?.videoId;
+    // taking user from optional auth
+    const user = req.user;
 
-    const video = await Video.findById(nvideoId);
+    const video = await Video.findById(videoId);
     if (!video) {
         throw new ApiError(404, "Video not found");
     }
 
-    if (!video.isListed) {
-        throw new ApiError(403, "Video is UnListed ");
+    if (!video.isListed ) {
+        // if owner of video req for watchVideo skip the error
+        if(video.owner.toString() !== user?._id?.toString()){
+            throw new ApiError(403, "Video is UnListed ");
+        }
     }
 
     video.views += 1;
 
-    const token =
-        req.cookies?.accessToken ||
-        req.header("Authorization")?.replace("Bearer ", "") ||
-        null;
+    // const token =
+    //     req.cookies?.accessToken ||
+    //     req.header("Authorization")?.replace("Bearer ", "") ||
+    //     null;
 
-    if (token) {
-        try {
-            const decodedToken = jwt.verify(
-                token,
-                process.env.ACCESS_TOKEN_SECRET
-            );
-
-            const _user = await User.findById(decodedToken?._id);
-            
-            if (!_user) {
-                throw new ApiError(401, "Invalid access");
-            }
+    if (user) {
+        const alreadyWatched = user.watchHistory?.some(ele =>{
+            ele.toString()  === video._id.toString();
+        })
 
             // Prevent duplicate entries in watch history
-            if (!_user.watchHistory.includes(video._id)) {
-                _user.watchHistory.push(video._id);
-                await _user.save();
-            } else {
-                video.views -= 1;
+            if (alreadyWatched) {
+                user.watchHistory.push(video._id);
+                await user.save();
             }
-        } catch (error) {
-            throw new ApiError(
-                500,
-                error?.message || "Something went wrong while auth_middleware"
-            );
-        }
+
     }
 
     await video.save();

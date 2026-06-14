@@ -3,8 +3,9 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 import { 
-    addCommentOnVideo,
-    addCommentOnPost,
+    addCommentsOnVideo,
+    addCommentsOnPost,
+    addCommentsOnPlaylist,
     addCommentOnComment,
     updateComment,
     getCommentReplies
@@ -13,10 +14,11 @@ import {
 
 const router = Router();
 
-router.route("/videos/:videoId/addComment").post(verifyJWT,addCommentOnVideo)
-router.route("/posts/:postId/addComment").post(verifyJWT,addCommentOnPost)
-router.route("/comments/:commentId/addReply").post(verifyJWT,addCommentOnComment)
-router.route("/:commentId/edit-comment").patch(verifyJWT, updateComment)
+router.route("/videos/:videoId").post(verifyJWT,addCommentsOnVideo)
+router.route("/posts/:postId").post(verifyJWT,addCommentsOnPost)
+router.route("/playlists/:playlistId").post(verifyJWT,addCommentsOnPlaylist)
+router.route("/reply/:commentId/").post(verifyJWT,addCommentOnComment)
+router.route("/:commentId/").patch(verifyJWT, updateComment)
 router.route("/:commentId/replies").get(getCommentReplies)
 
 export default router

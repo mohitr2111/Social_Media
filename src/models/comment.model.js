@@ -13,6 +13,10 @@ const commentSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref:"Post"
     },
+    playlist:{
+        type: Schema.Types.ObjectId,
+        ref:"Playlist"
+    },
     owner:{
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -38,13 +42,14 @@ const commentSchema = new mongoose.Schema({
 })
 
 commentSchema.pre("validate", async function(next){
-    if(!this.isModified("video") && !this.isModified("post")) return next();
+    if(!this.isModified("video") && !this.isModified("post") && !this.isModified("playlist")) return next();
     const hasPost = !!this.post;
     const hasVideo = !!this.video;
-    if(hasPost === hasVideo){
+    const hasPlaylist = !!this.playlist;
+    if((hasPost === hasVideo) || (hasPlaylist === hasPost) || (hasPlaylist === hasVideo)){
         return next(
             new Error(
-                "Comment must belong to either a video or a post"
+                "Comment must belong to either a video or a post or a playlist"
             )
         )
     }

@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 // todo
 // addCommentsOnPlaylist
 
-const addCommentOnVideo = asyncHandler(async(req, res)=>{
+const addCommentsOnVideo = asyncHandler(async(req, res)=>{
     // get video id
     // get user id
     // get the content
@@ -53,7 +53,7 @@ const addCommentOnVideo = asyncHandler(async(req, res)=>{
     .json(new ApiResponse(201,createdComment,"Comment is successfully created"))
 });
 
-const addCommentOnPost = asyncHandler(async(req, res)=>{
+const addCommentsOnPost = asyncHandler(async(req, res)=>{
     // get video id
     // get user id
     // get the content
@@ -82,6 +82,48 @@ const addCommentOnPost = asyncHandler(async(req, res)=>{
     const createdComment = await Comment.create({
         content,
         post: post._id,
+        owner: user._id,
+    })
+
+    // const createdComment = await Comment.findById(newComment._id);
+    if(!createdComment){
+        throw new ApiError(500, "Something went wrong while creating comment object")
+    }
+
+    res
+    .status(201)
+    .json(new ApiResponse(201,createdComment,"Comment is successfully created"))
+});
+
+const addCommentsOnPlaylist = asyncHandler(async(req, res)=>{
+    // get video id
+    // get user id
+    // get the content
+    // validate
+    // 
+
+    const {content} = req.body;
+    const user = req.user;
+    const playlist_Id = req.params?.playlistId || "";
+
+    if(!content?.trim()){
+        throw new ApiError(400, "content is required")
+    }
+    if(!playlist_Id){
+        throw new ApiError(400, "playlistId is required")
+    }
+    if(!user){
+        throw new ApiError(400, "You need a Account to comment on playlist, SignUp or LogIn")
+    }
+
+    const playlist = await Playlist.findById(playlist_Id);
+    if(!playlist){
+        throw new ApiError(404, "playlist doesn't exist")
+    }
+
+    const createdComment = await Comment.create({
+        content,
+        playlist: playlist._id,
         owner: user._id,
     })
 
@@ -216,8 +258,9 @@ const getCommentReplies = asyncHandler(async(req, res)=>{
 });
 
 export {
-    addCommentOnVideo,
-    addCommentOnPost,
+    addCommentsOnVideo,
+    addCommentsOnPost,
+    addCommentsOnPlaylist,
     addCommentOnComment,
     updateComment,
     getCommentReplies
