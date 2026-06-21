@@ -14,11 +14,11 @@ import {
 
 const router = Router();
 
-router.route("/videos/:videoId").post(verifyJWT,addCommentsOnVideo)
-router.route("/posts/:postId").post(verifyJWT,addCommentsOnPost)
-router.route("/playlists/:playlistId").post(verifyJWT,addCommentsOnPlaylist)
-router.route("/reply/:commentId/").post(verifyJWT,addCommentOnComment)
-router.route("/:commentId/").patch(verifyJWT, updateComment)
-router.route("/:commentId/replies").get(getCommentReplies)
+router.route("/videos/:video_id").post(verifyJWT,addCommentsOnVideo)
+router.route("/posts/:post_id").post(verifyJWT,addCommentsOnPost)
+router.route("/playlists/:playlist_id").post(verifyJWT,addCommentsOnPlaylist)
+router.route("/reply/:comment_id/").post(verifyJWT,addCommentOnComment)
+router.route("/:comment_id/").patch(verifyJWT, updateComment)
+router.route("/:comment_id/replies").get(getCommentReplies)
 
 export default router

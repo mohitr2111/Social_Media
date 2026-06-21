@@ -49,7 +49,7 @@ const likeSchema = new mongoose.Schema(
 );
 
 likeSchema.pre("validate", async function (next) {
-    let targets = [onComment, onVideo, onPost, onPlaylist];
+    let targets = [this.onComment, this.onVideo, this.onPost, this.onPlaylist];
     
     const count = targets.filter(element => Boolean(element));
 

@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
         url:{
             type: String
         },
-        publicId:{
+        public_id:{
             type: String
         }
     },
@@ -108,5 +108,5 @@ userSchema.methods.generateRefreshToken = function(){
 )
 }
 // userSchema.methods.generateRefreshToken = function(){}
-export const User = mongoose.model("user",userSchema) 
+export const User = mongoose.model("User",userSchema) 
 // export {isPasswordCorrect, generateAccessToken, generateRefreshToken}  

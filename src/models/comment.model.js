@@ -46,7 +46,7 @@ commentSchema.pre("validate", async function(next){
     const hasPost = !!this.post;
     const hasVideo = !!this.video;
     const hasPlaylist = !!this.playlist;
-    if((hasPost === hasVideo) || (hasPlaylist === hasPost) || (hasPlaylist === hasVideo)){
+    if((hasPost && hasVideo) || (hasPlaylist && hasPost) || (hasPlaylist && hasVideo)){
         return next(
             new Error(
                 "Comment must belong to either a video or a post or a playlist"

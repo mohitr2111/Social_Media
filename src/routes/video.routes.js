@@ -13,7 +13,7 @@ import{
 
 const router = Router(); 
 
-router.route("/upload-video").post(
+router.route("/upload").post(
     verifyJWT, 
     upload.fields([
         {
@@ -28,13 +28,17 @@ router.route("/upload-video").post(
     uploadVideo
 )
 
-router.route("/watch/:videoId").get(optionAuth, watchVideo)
-router.route("/update-details/:videoId").patch(verifyJWT, updateVideoDetails)
-router.route("/update-thumbnail/:videoId").patch(
+router.route("/:videoId")
+.get(optionAuth, watchVideo)
+.patch(verifyJWT, updateVideoDetails)
+.delete(verifyJWT, deleteVideo)
+
+router.route("/:videoId/update-thumbnail").patch(
     verifyJWT,
     upload.single("thumbnail"),
     updateThumbnail
 )
-router.route("/un-List/:videoId").patch(verifyJWT,un_ListVideo)
-router.route("/delete/:videoId").delete(verifyJWT, deleteVideo)
+router.route("/:videoId/un-list").patch(verifyJWT,un_ListVideo)
+
+// router.route("/:videoId").delete(verifyJWT, deleteVideo)
 export default router;

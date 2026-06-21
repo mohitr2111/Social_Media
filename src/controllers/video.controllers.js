@@ -113,12 +113,10 @@ const watchVideo = asyncHandler(async (req, res) => {
     //     null;
 
     if (user) {
-        const alreadyWatched = user.watchHistory?.some(ele =>{
-            ele.toString()  === video._id.toString();
-        })
+        const alreadyWatched = user.watchHistory?.some(ele =>ele.toString()  === video._id.toString())
 
             // Prevent duplicate entries in watch history
-            if (alreadyWatched) {
+            if (!alreadyWatched) {
                 user.watchHistory.push(video._id);
                 await user.save();
             }

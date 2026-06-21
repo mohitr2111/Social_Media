@@ -6,7 +6,7 @@ import {
     addVideoToPlaylist,
     updatePlaylistDetails,
     getUserPlaylist
-} from "../controllers/playlist.controllers.js"
+} from "../controllers/palylist.controllers.js"
 import { optionAuth } from "../middlewares/optionalAuth.middleware.js";
 
 const router = Router();
@@ -18,7 +18,7 @@ router.route("/:playlist_id")
 .patch(verifyJWT, updatePlaylistDetails)
 
 router.route("/:playlist_id/videos/:video_id").patch(verifyJWT,addVideoToPlaylist)
-router.route("user/:user_id").get(getPlaylistById)
+router.route("/users/:user_id").get(optionAuth, getUserPlaylist)
 
 
 

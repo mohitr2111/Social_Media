@@ -8,7 +8,7 @@ import {
     getPostReaction,
     getCommentReaction,
     getPlaylistReaction
-} from "../controllers/like.controllers"
+} from "../controllers/like.controllers.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { optionAuth } from "../middlewares/optionalAuth.middleware.js";
 

@@ -84,7 +84,7 @@ const createPost = asyncHandler(async(req, res)=>{
     const detailsOfImageToSaveOnDataBase = successfullyUploadOnCloudinary.map(ele => {
         return {
             url :ele.url,
-            public_id :ele.public_id
+            public_id :ele.public_id,  
         }
     })
 
@@ -163,15 +163,18 @@ const updatePost = asyncHandler(async(req, res)=>{
 
     if(toBeDeletedImages.length > 0){
 
-        const deletedResult = await deleteMultipleResources(toBeDeletedImages)
-
-        await Post.updateOne(
+        const dbResult = await Post.updateOne(
             { _id:post._id},
             {
                 $pull : {images:{ public_id : {$in:toBeDeletedImages}}}
             }
         );
 
+        if(dbResult.modifiedCount > 0){
+            const deletedResult = await deleteMultipleResources(toBeDeletedImages);
+            console.log("Files deleted from Cloudinary");
+        }
+        
         // if(deletedResult.length !== deletedVideos.length){
         //     throw new ApiError(500, "Not all images are deleted so please try again")
         // }

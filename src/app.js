@@ -25,7 +25,7 @@ import route from './routes/user.routes.js'
 import routeVideo from './routes/video.routes.js'
 import routeComment from './routes/comment.routes.js'
 import routePost from './routes/post.route.js'
-import routePlaylist from './routes/post.route.js'
+import routePlaylist from './routes/playlist.routes.js'
 import routeLike from './routes/like.routes.js'
 import routeSubscription from './routes/subscription.route.js'
 app.use("/api/v1/users", route)

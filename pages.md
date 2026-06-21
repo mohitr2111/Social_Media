@@ -148,7 +148,7 @@ GET videos/:video_id/recommendation system:
 
 
 
-GET user/:username
+GET channel/:username
     1- user:{
         username,
         fullname,

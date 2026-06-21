@@ -1,11 +1,18 @@
 // require('dotenv').config({path:'./.env'})
-import connectDB from "./db/index.js"
 import dotenv from "dotenv"
-import {app} from "./app.js" 
 
 dotenv.config({
     path:'./.env'
 })
+import connectDB from "./db/index.js"
+import "./models/comment.model.js"
+import "./models/like.model.js"
+import "./models/subscription.model.js"
+import "./models/user.model.js"
+import "./models/video.model.js"
+import "./models/playlist.model.js"
+import "./models/post.model.js"
+import {app} from "./app.js" 
 console.log("Loaded MONGODB_URI:", process.env.MONGODB_URI);
 
 connectDB()

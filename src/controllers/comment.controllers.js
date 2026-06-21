@@ -1,4 +1,3 @@
-import { createElement } from "react";
 import { Comment } from "../models/comment.model.js";
 import { Post } from "../models/post.model.js";
 import { Video } from "../models/video.model.js";
@@ -20,13 +19,13 @@ const addCommentsOnVideo = asyncHandler(async(req, res)=>{
 
     const {content} = req.body;
     const user = req.user;
-    const video_Id = req.params?.videoId || "";
+    const video_Id = req.params?.video_id || "";
 
     if(!content?.trim()){
         throw new ApiError(400, "content is required")
     }
     if(!video_Id){
-        throw new ApiError(400, "videoId is required")
+        throw new ApiError(400, "video_id is required")
     }
     if(!user){
         throw new ApiError(400, "You need a Account to comment on video, SignUp or LogIn")
@@ -62,13 +61,13 @@ const addCommentsOnPost = asyncHandler(async(req, res)=>{
 
     const {content} = req.body;
     const user = req.user;
-    const post_Id = req.params?.postId || "";
+    const post_Id = req.params?.post_id || "";
 
     if(!content?.trim()){
         throw new ApiError(400, "content is required")
     }
     if(!post_Id){
-        throw new ApiError(400, "postId is required")
+        throw new ApiError(400, "post_id is required")
     }
     if(!user){
         throw new ApiError(400, "You need a Account to comment on Post, SignUp or LogIn")
@@ -104,13 +103,13 @@ const addCommentsOnPlaylist = asyncHandler(async(req, res)=>{
 
     const {content} = req.body;
     const user = req.user;
-    const playlist_Id = req.params?.playlistId || "";
+    const playlist_Id = req.params?.playlist_id || "";
 
     if(!content?.trim()){
         throw new ApiError(400, "content is required")
     }
     if(!playlist_Id){
-        throw new ApiError(400, "playlistId is required")
+        throw new ApiError(400, "playlist_id is required")
     }
     if(!user){
         throw new ApiError(400, "You need a Account to comment on playlist, SignUp or LogIn")
@@ -148,7 +147,7 @@ const addCommentOnComment = asyncHandler(async (req, res)=>{
     //res
 
     const {content} = req.body;
-    const comment_Id = req.params?.commentId;
+    const comment_Id = req.params?.comment_id;
     const user = req.user;
 
     if(!content?.trim()){
@@ -172,7 +171,8 @@ const addCommentOnComment = asyncHandler(async (req, res)=>{
         parentComment: parentComment._id,
         commentLevel: parentComment.commentLevel + 1,
         video: parentComment.video,
-        post: parentComment.post
+        post: parentComment.post,
+        playlist:parentComment.playlist
     })
 
     // const createdComment = await Comment.findById(newComment._id)
@@ -190,7 +190,7 @@ const addCommentOnComment = asyncHandler(async (req, res)=>{
 
 const updateComment = asyncHandler(async(req, res)=>{
     // get user
-    // get commentId
+    // get comment_id
     // get new content
     // validate
     // does this comment even exist
@@ -201,7 +201,7 @@ const updateComment = asyncHandler(async(req, res)=>{
     
     const {newContent} = req.body;
     const user = req.user;
-    const comment_Id = req.params?.commentId;
+    const comment_Id = req.params?.comment_id;
     
     if(!newContent?.trim()){
         throw new ApiError(400, "Content is required")
@@ -234,12 +234,12 @@ const updateComment = asyncHandler(async(req, res)=>{
 // get all reply of comment 
 
 const getCommentReplies = asyncHandler(async(req, res)=>{
-    // get commentId
+    // get comment_id
     // validate
     // apply aggregate pipelines
     // return the response
 
-    const comment_Id = req.params?.commentId;
+    const comment_Id = req.params?.comment_id;
     if(!comment_Id){
         throw new ApiError(400, "Comment Id is required")
     }

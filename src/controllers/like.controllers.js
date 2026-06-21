@@ -8,7 +8,7 @@ import { Post } from "../models/post.model.js";
 import { Playlist } from "../models/playlist.model.js";
 
 const toggledValue = (existingVal, newVal) => {
-    if (existingVal === newVal) {
+    if (existingVal == newVal) {
         return 0;
     }
 

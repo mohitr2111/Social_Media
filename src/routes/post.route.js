@@ -18,8 +18,9 @@ router.route("/createPost").post(
     createPost
 )
 
-router.route("/:postId").get(getPostById)
-router.route("/update/:postId").patch(
+router.route("/:postId")
+.get(getPostById)
+.patch(
     verifyJWT,
     upload.fields([{
         name : "images",
@@ -27,6 +28,14 @@ router.route("/update/:postId").patch(
     }]),
     updatePost
 )
+// router.route("/update/:postId").patch(
+//     verifyJWT,
+//     upload.fields([{
+//         name : "images",
+//         maxCount:12
+//     }]),
+//     updatePost
+// )
 
 export default router;
 

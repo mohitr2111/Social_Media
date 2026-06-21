@@ -53,8 +53,8 @@ const videoSchema = new mongoose.Schema(
     },
     {
         timestamps:{
-            createdAt: "Created",
-            updatedAt: "Updated"
+            createdAt: true,
+            updatedAt: true
         }
     }
 )

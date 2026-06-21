@@ -10,6 +10,14 @@ import {
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
+import {
+    userDetailsServices,
+    userDetailsAndStatsServices,
+    starVideosServices,
+    starPostsServices,
+    starPlaylistsServices
+} from "../services/user.services.js"
+
 // todo
 // getSubscribedChannels() getChannelSubscribers() checkSubscriptionStatus()
 //  get user playlist
@@ -216,13 +224,13 @@ const logoutUser = asyncHandler(async (req, res) => {
         req.user._id,
         {
             $set: {
-                refreshToken: undefined,
+                refreshToken: null,
             },
         },
         {
             new: true,
         }
-    );
+    ).select("-password");
 
     const options = {
         httpOnly: true,
@@ -232,7 +240,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     res.status(200)
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
-        .json(new ApiResponse(200, {}, "User is logged out"));
+        .json(new ApiResponse(200, c_user, "User is logged out"));
 });
 
 const systemLoginByAccessToken = asyncHandler(async (req, res) => {
@@ -247,7 +255,7 @@ const systemLoginByAccessToken = asyncHandler(async (req, res) => {
 
     try {
         const aliveRefreshToken =
-            req.cookies?.refreshToken || req.body.refreshToken;
+            req.cookies?.refreshToken || req.body.refreshToken || null;
 
         if (!aliveRefreshToken) {
             throw new ApiError(401, "No alive token");
@@ -435,9 +443,14 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
     const newAvatarLocalPath = req.file?.path;
     const user = req.user;
+    // console.log(user);
 
     if (!newAvatarLocalPath) {
         throw new ApiError(400, "Did not recive avatar, try again");
+    }
+
+    if(!user.avatar.public_id){
+        throw new ApiError(400, "Did not recive public id");
     }
 
     const deleteAvatarCloudinaryResult = await deleteImageFromCloudinary(
@@ -459,6 +472,9 @@ const updateAvatar = asyncHandler(async (req, res) => {
                     public_id: uploadedAvatarResult?.public_id,
                 },
             },
+        },
+        {
+            new : true
         },
         { validateBeforeSave: false }
     ).select("-password -refreshToken");
@@ -503,6 +519,9 @@ const updateCoverImg = asyncHandler(async (req, res) => {
                 },
             },
         },
+        {
+            new : true
+        },
         { validateBeforeSave: false }
     ).select("-password -refreshToken");
 
@@ -511,6 +530,7 @@ const updateCoverImg = asyncHandler(async (req, res) => {
     );
 });
 
+/*
 const getUserProfile = asyncHandler(async (req, res) => {
     // on visiting someone profile
     // get the username(whose profile we are visitng) from params ✅
@@ -594,6 +614,32 @@ const getUserProfile = asyncHandler(async (req, res) => {
         )
     );
 });
+*/
+
+const getUserProfile = asyncHandler(async(req, res)=>{
+    const username  = req.params?.username;
+    const user = req.user;
+    if(!username){
+        throw new ApiError(400, "Username  is required")
+    }
+
+    const userDetailsAndStats = await userDetailsAndStatsServices(username , user);
+
+    const starVideos = await starVideosServices(username);
+
+    const starPlaylists = await starPlaylistsServices(username);
+    
+    const starPosts = await starPostsServices(username, user);
+
+    res
+    .status(200)
+    .json(new ApiResponse(200 ,{
+        userDetailsAndStats,
+        starVideos,
+        starPlaylists,
+        starPosts
+    }, "channel home page details fetched successffully"))
+})
 
 const getWatchHistory = asyncHandler(async (req, res) => {
     // get the watch history of our user

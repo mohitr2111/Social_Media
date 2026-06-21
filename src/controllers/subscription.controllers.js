@@ -13,7 +13,7 @@ const subscribeChannel = asyncHandler(async(req, res)=>{
     // 
 
     const subscriber = req.user._id;
-    const channel_from_params = req.params?.username;
+    const channel_from_params = req.params?.channel_username;
 
     if(!subscriber){
         throw new ApiError(400, "login from your account to Subscribe")
@@ -60,17 +60,25 @@ const subscribeChannel = asyncHandler(async(req, res)=>{
 const checkSubscriptionStatus = asyncHandler(async(req,res)=>{
     // 
     const user = req.user;
-    const channel_id = req.params?.channel_id;
+    const channel_from_params = req.params?.channel_username;
     if(!user){
         throw new ApiError(400, "you need to be logged in")
     }
-    if(!channel_id){
-        throw new ApiError(400, "channel id is required")
+    if(!channel_from_params){
+        throw new ApiError(400, "channel username is required")
+    }
+
+    const channel = await User.findOne({
+        username:channel_from_params
+    })
+
+    if(!channel){
+        throw new ApiError(404, "Channel not found") 
     }
 
     const isSubscribed = await Subscription.findOne({
         subscriber : user._id,
-        channel : channel_id
+        channel : channel._id
     })
 
     // let val = true;
@@ -94,7 +102,7 @@ const getChannelSubscribers = asyncHandler(async(req, res)=>{
 
     const stats = await Subscription.find({
         channel : channel_id
-    }).populate("subscriber", "username fullname avatar")
+    }).populate("subscriber", "_id username fullname avatar")
 
 
     const ans = {
